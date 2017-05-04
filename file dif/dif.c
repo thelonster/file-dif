@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAXLINE 500
+#define MAXLINE 200
 
 int getline(char *line, int max, FILE *file) {
 	if (fgets(line, max, file) == NULL)
@@ -24,10 +24,13 @@ void difroutine() {
 	int linenum = 0;
 	char *fp1line = (char*)malloc(MAXLINE);
 	char *fp2line = (char*)malloc(MAXLINE);
-	while (strcmp(fp1line, EOF) != 0 && strcmp(fp2line, EOF) != 0) {
+	int count = 0;
+	while (strcmp(fp1line, "") != 0 && strcmp(fp2line, "") != 0 && count < 5) {
 		getline(fp1line, MAXLINE, fp1);
 		getline(fp2line, MAXLINE, fp2);
 		if (strcmp(fp1line, fp2line) != 0)
-			printf("%d: %s\n%d: %s",linenum,fp1line,linenum++,fp2line);
+			printf("%d: %s%d: %s",linenum,fp1line,linenum,fp2line);
+		linenum++;
+		count++;
 	}
 }
