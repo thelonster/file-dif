@@ -22,6 +22,7 @@
     <ProjectGuid>{2988A2B7-2893-40FD-9C7E-7A79D0EFA5FF}</ProjectGuid>
     <RootNamespace>filedif</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>file diff</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
