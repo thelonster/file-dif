@@ -1,4 +1,4 @@
-#include "dif.h"
+#include "diff.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,4 +33,20 @@ void difroutine() {
 		linenum++;
 		count++;
 	}
+}
+
+int version() {
+	printf("diff (GNU duffutils) 1.0\nCopyright (c) 2017 LGHANSEN\n\n");
+	printf("This program comes with NO WARRANTY, to the extent permitted by law.\nYou may redistribute copies of this program\n");
+	printf("under the terms of the GNU General Public License.\n");
+	printf(	"For more information about these matters, see the file named COPYING.\n\n");
+	printf("Written by Lonnie Hansen");
+	//Returns 0 because no differences were found because no comparison was made
+	return 0;
+}
+
+int help() {
+	printf("use google stupid");
+	//Returns 0 because no differences were found because no comparison was made
+	return 0;
 }

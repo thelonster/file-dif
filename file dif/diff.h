@@ -8,6 +8,10 @@
 int getline(char*  line, int max, FILE *file);
 /*Routine that compares 2 files and prints out files that are different*/
 void difroutine();
+/*Prints out the version information*/
+int version();
+/*Prints out help information*/
+int help();
 
 
 #endif // !dif_h
