@@ -7,7 +7,6 @@
 int main(int argc, const char* argv[]) {
 	if (argc < 2) {
 		printf("Error: not enough arguments\n");
-		printf("");
 		return 2;
 	}
 	char* fname1, fname2;
@@ -65,6 +64,14 @@ int main(int argc, const char* argv[]) {
 
 	FILE* file1 = fopen(fname1, "r");
 	FILE* file2 = fopen(fname2, "r");
+	if (file1 == NULL) {
+		printf("Error: %s: no such file");
+		return 0;
+	}
+	if (file2 == NULL) {
+		printf("Error: %s: no such file");
+		return 0;
+	}
 
 	for (int a = 0; a < argc; a++) {
 		if (strcmp(argv[a], "--version") == 0 || strcmp(argv[a], "-v") == 0)
@@ -76,8 +83,16 @@ int main(int argc, const char* argv[]) {
 			if (reportidenticalfiles == 1)
 				if (b == 1)
 					printf("Files %s and %s are identical",fname1,fname2);
-		}
-			
+		}			
 	}
+
+	if (sidebyside == 1) {
+		
+	}
+	else {
+
+	}
+
+
 	return 0;
 }
