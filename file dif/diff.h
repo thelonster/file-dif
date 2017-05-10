@@ -30,5 +30,7 @@ unsigned ichash(char* s);
 struct line *install(char* c, int ln, char* fn, int igncse);
 /*Looks up if a line is in the hash table*/
 struct line *lookup(char* s, int igncse);
+/*Removes a line from the hash table*/
+void removeline(char* c, int igncse);
 
 #endif // !dif_h

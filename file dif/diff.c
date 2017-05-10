@@ -117,3 +117,21 @@ line *lookup(char* s, int igncse) {
 			return lp;
 	return NULL;
 }
+
+void removeline(char* c, int igncse) {
+	line *lp, *pp;
+	for (pp = NULL, lp = igncse ? hashtab[hash(c)] : hashtab[ichash(c)]; lp != NULL; pp = lp, lp = lp->next) {
+		if (!strcmp(c, lp->content)) {
+			if (pp == NULL && igncse)
+				hashtab[ichash(c)] = lp->next;
+			else if (pp == NULL && !igncse)
+				hashtab[hash(c)] = lp->next;
+			else
+				pp->next = lp->next;
+			free(lp->content);
+			free(lp->fname);
+			free(lp);
+			return;
+		}
+	}
+}
