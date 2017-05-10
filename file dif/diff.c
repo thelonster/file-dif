@@ -112,7 +112,7 @@ line *install(char* c, int ln, char* fn, int igncse) {
 
 line *lookup(char* s, int igncse) {
 	line* lp;
-	for (lp = igncse ? hash(s) : ichash(s); lp != NULL; lp = lp->next)
+	for (lp = igncse ? hashtab[hash(s)] : hashtab[ichash(s)]; lp != NULL; lp = lp->next)
 		if (!strcmp(s, lp->content))
 			return lp;
 	return NULL;

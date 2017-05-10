@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#define MAXLINE 200
+
 int main(int argc, const char* argv[]) {
 	if (argc < 2) {
 		printf("Error: not enough arguments\n");
@@ -18,6 +20,7 @@ int main(int argc, const char* argv[]) {
 		ignorecase = 0, leftcolumn = 0, reportidenticalfiles = 0,
 		suppresscommonlines = 0, width = 0, ignoreallspace = 0, sidebyside = 0;
 
+	//Loops through arguments and set flags where needed.
 	for (int a = 0; a < argc; a++) {
 		char* temp = strdup(strstr(argv[a], "."));
 		if (temp != NULL) {
@@ -62,6 +65,7 @@ int main(int argc, const char* argv[]) {
 
 	}
 
+	//Open the files and check if they are null
 	FILE* file1 = fopen(fname1, "r");
 	FILE* file2 = fopen(fname2, "r");
 	if (file1 == NULL) {
@@ -73,6 +77,8 @@ int main(int argc, const char* argv[]) {
 		return 0;
 	}
 
+	//If version, help, or brief are wanted, override normal utility and
+	//execute which ever option comes first
 	for (int a = 0; a < argc; a++) {
 		if (strcmp(argv[a], "--version") == 0 || strcmp(argv[a], "-v") == 0)
 			return version();
@@ -86,7 +92,24 @@ int main(int argc, const char* argv[]) {
 		}			
 	}
 
-	if (sidebyside == 1) {
+	//Add all lines from both files to hashtable
+	int c, lineno = 0;
+	char* line = (char*)malloc(MAXLINE);
+	while ((c = fgetc(file1)) != EOF) {
+		ungetc(c,file1);
+		getline(line, MAXLINE, file1);
+		install(line, lineno++, fname1, ignorecase);
+	}
+	lineno = 0;
+	while ((c = fgetc(file2)) != EOF) {
+		ungetc(c, file2);
+		getline(line, MAXLINE, file2);
+		install(line, lineno++, fname2, ignorecase);
+	}
+
+
+	//save for a bit later
+	if (sidebyside) {
 		
 	}
 	else {
