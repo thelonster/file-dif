@@ -2,8 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAXLINE 200
+#define HASHSIZE 101
+
+typedef struct line line;
+
+line *hashtab[HASHSIZE];
 
 int getline(char *line, int max, FILE *file) {
 	if (fgets(line, max, file) == NULL)
@@ -63,4 +69,51 @@ int brief(FILE *fp1, FILE *fp2, char* fname1, char* fname2) {
 		}
 	}
 	return 0;	//Return 0 because files are identical
+}
+
+unsigned hash(char* s) {
+	unsigned hashval;
+	for (hashval = 0; *s != '\0'; s++)
+		hashval = *s + 31 * hashval;
+	return hashval % HASHSIZE;
+}
+
+unsigned ichash(char* s) {
+	unsigned hashval;
+	for (hashval = 0; *s != '\0'; s++)
+		hashval = tolower(*s) + 31 * hashval;	//Forces lower case
+	return hashval % HASHSIZE;
+}
+
+line *install(char* c, int ln, char* fn, int igncse) {
+	line* lp;
+	unsigned hashval;
+	if ((lp = lookup(c, igncse)) == NULL) {
+		lp = (line*)malloc(sizeof(*lp));
+		if (lp == NULL || (lp->content = strdup(c)) == NULL)
+			return NULL;
+		lp->linenum = ln;
+		lp->fname = strdup(fn);
+		hashval = igncse ? hash(c) : ichash(c);
+		lp->next = hashtab[hashval];
+		hashtab[hashval] = lp;
+	}
+	else {
+		while (lp != NULL)
+			lp = lp->next;
+		lp = (line*)malloc(sizeof(*lp));
+		lp->content = strdup(c);
+		lp->linenum = ln;
+		lp->fname = strdup(fn);
+		lp->next = NULL;
+	}
+	return lp;
+}
+
+line *lookup(char* s, int igncse) {
+	line* lp;
+	for (lp = igncse ? hash(s) : ichash(s); lp != NULL; lp = lp->next)
+		if (!strcmp(s, lp->content))
+			return lp;
+	return NULL;
 }
