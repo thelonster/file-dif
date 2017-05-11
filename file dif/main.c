@@ -6,6 +6,8 @@
 
 #define MAXLINE 200
 
+typedef struct line line;
+
 int main(int argc, const char* argv[]) {
 	if (argc < 2) {
 		printf("Error: not enough arguments\n");
@@ -22,8 +24,9 @@ int main(int argc, const char* argv[]) {
 
 	//Loops through arguments and set flags where needed.
 	for (int a = 0; a < argc; a++) {
-		char* temp = strdup(strstr(argv[a], "."));
+		char* temp = strdup(strstr(argv[a], "."));	//Filenames have periods
 		if (temp != NULL) {
+			printf("Hell yeah\n");
 			if (numf == 0)
 				fname1 = strdup(argv[a]);
 			else
@@ -42,7 +45,8 @@ int main(int argc, const char* argv[]) {
 		else if (strcmp(argv[a], "--left-column") == 0)
 			leftcolumn = 1;
 		else if (strcmp(argv[a], "--recursive") == 0 || strcmp(argv[a], "-r") == 0) {
-			printf("Error: --recursive flag (and comparing directories in general) is not supported in this version of diff.\n");
+			printf("Error: --recursive flag (and comparing directories in general)"
+				"is not supported in this version of diff.\n");
 			return 0;
 		}			
 		else if (strcmp(argv[a], "--report-identical-files") == 0 || strcmp(argv[a], "-s") == 0)
@@ -94,18 +98,76 @@ int main(int argc, const char* argv[]) {
 
 	//Add all lines from both files to hashtable
 	int c, lineno = 0;
-	char* line = (char*)malloc(MAXLINE);
+	char* line_ = (char*)malloc(MAXLINE);
 	while ((c = fgetc(file1)) != EOF) {
 		ungetc(c,file1);
-		getline(line, MAXLINE, file1);
-		install(line, lineno++, fname1, ignorecase);
+		getline(line_, MAXLINE, file1);
+		install(line_, lineno++, fname1, ignorecase);
 	}
 	lineno = 0;
 	while ((c = fgetc(file2)) != EOF) {
 		ungetc(c, file2);
-		getline(line, MAXLINE, file2);
-		install(line, lineno++, fname2, ignorecase);
+		getline(line_, MAXLINE, file2);
+		install(line_, lineno++, fname2, ignorecase);
 	}
+	/*Pseudo code on how to get this working
+		go through both files line by line
+		if one doesn't exist in the other
+			check if there is a capitalization error
+			if not find where to add/delete/move (either at the top or the end)
+		if the line exists in the other
+			print it with according to all the arguments flagged 
+				i.e. sidebyside, suppresscommonlines, width
+
+		cases:
+			in file 1, not file 2
+			in file 2, not file 1
+			almost the same
+			moved line in file 1
+			moved line in file 2
+			same line in bot files
+	
+	*/
+	//Set the file pos back to the beginning so that I can loop through them again
+	rewind(file1);
+	rewind(file2);
+	line* linehold[20];
+	int pos = 0;
+	while ((getline(line_, MAXLINE, file1)) != 0) {
+		line* lp = lookup(line_, ignorecase);
+		if (strcmp(lp->fname, fname1) == 0) {
+			if (lp->next == NULL) {
+				line* temp = lookup(line_, 1);
+				if (lp->next != NULL) {
+					if (sidebyside) {
+						//fuck you 
+					}
+					else {
+						printf("%d");
+					}
+				}
+				while (lp->next == NULL) {
+					linehold[pos++] = lp;
+					getline(line_, MAXLINE, file1);
+					lp = lookup(line_, ignorecase);
+				}
+				if (sidebyside) {
+					//fuck side-by-side
+				}
+				else {
+					printf("%d,%dd%d\n", linehold[0]->linenum, linehold[pos - 1]->linenum,
+						lp->next->linenum);
+					for (int a = 0; a < pos; a++)
+						printf("%s",linehold[a]->content);
+				}
+			}
+
+		}
+		else {
+
+		}
+	}
+
 
 
 	//save for a bit later
