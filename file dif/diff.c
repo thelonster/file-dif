@@ -60,11 +60,11 @@ int help() {
 int brief(FILE *fp1, FILE *fp2, char* fname1, char* fname2) {
 	char *fp1line = (char*)malloc(MAXLINE);
 	char *fp2line = (char*)malloc(MAXLINE);
-	while (strcmp(fp1line, "") != 0 && strcmp(fp2line, "") == 0) {
+	while (strcmp(fp1line, "") != 0 && strcmp(fp2line, "") != 0) {
 		getline(fp1line, MAXLINE, fp1);
 		getline(fp2line, MAXLINE, fp2);
 		if (strcmp(fp1line, fp2line) != 0) {
-			printf("Files %s and %s differ",fname1,fname2);
+			printf("Files %s and %s differ\n",fname1,fname2);
 			return 1;	//Return 1 because files differ
 		}
 	}

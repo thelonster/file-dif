@@ -13,22 +13,23 @@ int main(int argc, const char* argv[]) {
 		printf("Error: not enough arguments\n");
 		return 2;
 	}
-	char* fname1, fname2;
+	char* fname1, *fname2;
 	fname1 = strdup("");
 	fname2 = strdup("");
 	int numf = 0;
 
 	int text = 0, ignorespacechange = 0, ignoreblanklines = 0, ignoretabexpansion = 0,
-		ignorecase = 0, leftcolumn = 0, reportidenticalfiles = 0,
+		ignorecase = 0, leftcolumn = 0, reportidenticalfiles = 0, q = 0,
 		suppresscommonlines = 0, width = 0, ignoreallspace = 0, sidebyside = 0;
 
 	//Loops through arguments and set flags where needed.
-	for (int a = 0; a < argc; a++) {
+	for (int a = 1; a < argc; a++) {
 		char* temp = strdup(strstr(argv[a], "."));	//Filenames have periods
 		if (temp != NULL) {
-			printf("Hell yeah\n");
-			if (numf == 0)
+			if (numf == 0) {
 				fname1 = strdup(argv[a]);
+				numf++;
+			}
 			else
 				fname2 = strdup(argv[a]);
 		}
@@ -48,7 +49,7 @@ int main(int argc, const char* argv[]) {
 			printf("Error: --recursive flag (and comparing directories in general)"
 				"is not supported in this version of diff.\n");
 			return 0;
-		}			
+		}
 		else if (strcmp(argv[a], "--report-identical-files") == 0 || strcmp(argv[a], "-s") == 0)
 			reportidenticalfiles = 1;
 		else if (strcmp(argv[a], "--suppress-common-lines") == 0)
@@ -66,34 +67,38 @@ int main(int argc, const char* argv[]) {
 			ignoreallspace = 1;
 		else if (strcmp(argv[a], "--side-by-side") == 0 || strcmp(argv[a], "-y") == 0)
 			sidebyside = 1;
+		else if (strcmp(argv[a], "--brief") == 0 || strcmp(argv[a], "-q") == 0)
+			q = 1;
 
+	}
+
+	//If version, help, or brief are wanted, override normal utility and
+	//execute which ever option comes first
+	for (int a = 1; a < argc; a++) {
+		if (strcmp(argv[a], "--version") == 0 || strcmp(argv[a], "-v") == 0)
+			return version();
+		else if (strcmp(argv[a], "--help") == 0)
+			return help();	
 	}
 
 	//Open the files and check if they are null
 	FILE* file1 = fopen(fname1, "r");
 	FILE* file2 = fopen(fname2, "r");
 	if (file1 == NULL) {
-		printf("Error: %s: no such file");
+		printf("Error: %s: no such file", fname1);
 		return 0;
 	}
 	if (file2 == NULL) {
-		printf("Error: %s: no such file");
+		printf("Error: %s: no such file", fname2);
 		return 0;
 	}
 
-	//If version, help, or brief are wanted, override normal utility and
-	//execute which ever option comes first
-	for (int a = 0; a < argc; a++) {
-		if (strcmp(argv[a], "--version") == 0 || strcmp(argv[a], "-v") == 0)
-			return version();
-		else if (strcmp(argv[a], "--help") == 0)
-			return help();
-		else if (strcmp(argv[a], "--brief") == 0 || strcmp(argv[a], "-q" == 0)) {
-			int b = brief(file1, file2, fname1, fname2);
-			if (reportidenticalfiles == 1)
-				if (b == 1)
-					printf("Files %s and %s are identical",fname1,fname2);
-		}			
+	if (q) {
+		int b = brief(file1, file2, fname1, fname2);
+		if (reportidenticalfiles == 1)
+			if (b == 1)
+				printf("Files %s and %s are identical", fname1, fname2);
+		return b;
 	}
 
 	//Add all lines from both files to hashtable
@@ -140,10 +145,10 @@ int main(int argc, const char* argv[]) {
 				line* temp = lookup(line_, 1);
 				if (lp->next != NULL) {
 					if (sidebyside) {
-						//fuck you 
+						//ugh
 					}
 					else {
-						printf("%d");
+						printf("something\n");
 					}
 				}
 				while (lp->next == NULL) {
@@ -152,7 +157,7 @@ int main(int argc, const char* argv[]) {
 					lp = lookup(line_, ignorecase);
 				}
 				if (sidebyside) {
-					//fuck side-by-side
+					//sucks
 				}
 				else {
 					printf("%d,%dd%d\n", linehold[0]->linenum, linehold[pos - 1]->linenum,
