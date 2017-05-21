@@ -115,6 +115,7 @@ int main(int argc, const char* argv[]) {
 		getline(line_, MAXLINE, file2);
 		install(line_, lineno++, fname2, ignorecase);
 	}
+
 	/*Pseudo code on how to get this working
 		go through both files line by line
 		if one doesn't exist in the other
@@ -134,6 +135,7 @@ int main(int argc, const char* argv[]) {
 	
 	*/
 	//Set the file pos back to the beginning so that I can loop through them again
+
 	rewind(file1);
 	rewind(file2);
 	line* linehold[20];
@@ -143,46 +145,21 @@ int main(int argc, const char* argv[]) {
 		if (strcmp(lp->fname, fname1) == 0) {
 			if (lp->next == NULL) {
 				line* temp = lookup(line_, 1);
-				if (lp->next != NULL) {
-					if (sidebyside) {
-						//ugh
-					}
-					else {
-						printf("something\n");
-					}
-				}
-				while (lp->next == NULL) {
+				while (lp != NULL && lp->next == NULL && pos < 20) {
 					linehold[pos++] = lp;
-					getline(line_, MAXLINE, file1);
+					getline(line_, MAXLINE, file1);									
 					lp = lookup(line_, ignorecase);
 				}
-				if (sidebyside) {
-					//sucks
-				}
-				else {
+				if (lp->next != NULL) {
 					printf("%d,%dd%d\n", linehold[0]->linenum, linehold[pos - 1]->linenum,
 						lp->next->linenum);
 					for (int a = 0; a < pos; a++)
-						printf("%s",linehold[a]->content);
+						printf("%s", linehold[a]->content);
 				}
+				pos = 0;
 			}
-
-		}
-		else {
-
 		}
 	}
-
-
-
-	//save for a bit later
-	if (sidebyside) {
-		
-	}
-	else {
-
-	}
-
 
 	return 0;
 }
